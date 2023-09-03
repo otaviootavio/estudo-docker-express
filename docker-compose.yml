@@ -9,7 +9,7 @@ services:
     depends_on:
       - db
     volumes:
-      - app_data:/usr/src/app
+      - .:/usr/src/app
     environment:
       - PORT=${PORT}
       - DB_USER=${DB_USER}

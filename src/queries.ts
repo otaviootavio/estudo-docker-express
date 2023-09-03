@@ -11,7 +11,7 @@ const pool:Pool = new Pool({
 
   const getUsers = async (response: Response): Promise<void> => {
     const results = await pool.query('SELECT * FROM public.employees ORDER BY id ASC');
-    response.json({ response: results.rows });
+    response.json( results.rows );
   }
    
 
