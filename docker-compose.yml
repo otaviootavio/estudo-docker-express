@@ -18,6 +18,16 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_PORT=${DB_PORT}
 
+  frontend:
+    container_name: frontend
+    build: ./frontend
+    volumes:
+      - ./frontend:/usr/src/app/frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+  
   db:
     container_name: postgres
     image: postgres
