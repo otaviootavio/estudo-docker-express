@@ -1,7 +1,16 @@
 import express, { NextFunction, Request, Response, Express } from "express";
 import employeeRouter from "./router/employeeRoutes";
+import cors from "cors";
 
 const app: Express = express() as Express;
+
+const allowedOrigins = ['http://localhost:3000'];
+
+const options: cors.CorsOptions = {
+  origin: allowedOrigins
+};
+
+app.use(cors(options));
 
 app.use(express.json());
 

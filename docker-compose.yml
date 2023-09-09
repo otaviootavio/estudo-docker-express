@@ -3,13 +3,13 @@ services:
   api:
     container_name: api
     restart: always
-    build: .
+    build: ./api
     ports:
       - ${PORT}:${PORT}
     depends_on:
       - db
     volumes:
-      - .:/usr/src/app
+      - ./api:/usr/src/app/api
     environment:
       - PORT=${PORT}
       - DB_USER=${DB_USER}
@@ -17,6 +17,8 @@ services:
       - DB_NAME=${DB_NAME}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_PORT=${DB_PORT}
+    networks:
+      - postgres-compose-network
 
   frontend:
     container_name: frontend
@@ -24,9 +26,11 @@ services:
     volumes:
       - ./frontend:/usr/src/app/frontend
     ports:
-      - "3000:3000"
+      - "3000:5173"
     depends_on:
       - api
+    networks:
+      - postgres-compose-network
   
   db:
     container_name: postgres
@@ -34,23 +38,31 @@ services:
     ports:
       - "5433:${DB_PORT}"
     volumes:
-      - data:/data/db
+      - data:/var/lib/postgresql/data
       - ./postgres-init:/docker-entrypoint-initdb.d/ 
     environment:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
+    networks:
+    - postgres-compose-network
 
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin_container
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@example.com
-      PGADMIN_DEFAULT_PASSWORD: adminpassword
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
     ports:
       - "8080:80"
     depends_on:
       - db
+    networks:
+    - postgres-compose-network
 
 volumes:
   data: {}
   app_data: {}
+
+networks: 
+  postgres-compose-network:
+    driver: bridge
